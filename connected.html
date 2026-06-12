@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verbunden · EMR Analytics</title>
+<style>
+  *{box-sizing:border-box}html,body{height:100%}
+  body{margin:0;display:flex;align-items:center;justify-content:center;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    color:#e8eaf0;background:radial-gradient(1100px 560px at 50% -8%,#1b2233 0%,#0e1016 60%)}
+  .card{width:100%;max-width:440px;margin:20px;background:#141823;border:1px solid #232a3a;
+    border-radius:20px;padding:46px 40px 34px;text-align:center;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .badge{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7c869c;margin-bottom:6px}
+  h1{font-size:22px;font-weight:680;margin:0 0 12px;letter-spacing:-.01em;word-break:break-word}
+  p{font-size:14.5px;line-height:1.6;color:#9aa3b2;margin:0 auto;max-width:330px}
+  .brand{margin-top:30px;padding-top:18px;border-top:1px solid #232a3a;font-size:12px;letter-spacing:.06em;color:#5b6472}
+  .brand b{color:#8b93a6;font-weight:600}
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge" id="badge"></div>
+    <div class="eyebrow" id="eyebrow">Verbunden</div>
+    <h1 id="title">Workspace verbunden</h1>
+    <p id="msg">Dieser Workspace ist jetzt mit EMR Analytics verbunden. Du kannst dieses Fenster schließen.</p>
+    <div class="brand"><b>EMR</b> &middot; ClickUp Analytics</div>
+  </div>
+<script>
+  const p = new URLSearchParams(location.search);
+  const ok = (p.get("status") || "ok") !== "error";
+  const ws = p.get("workspace");
+  const msg = p.get("msg");
+  const accent = ok ? "#22c55e" : "#ef4444";
+  const glow = ok ? "rgba(34,197,94,.16)" : "rgba(239,68,68,.16)";
+  const check = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+  const cross = '<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+  const badge = document.getElementById("badge");
+  badge.style.background = accent;
+  badge.style.boxShadow = "0 0 0 10px " + glow;
+  badge.innerHTML = ok ? check : cross;
+  document.getElementById("eyebrow").textContent = ok ? "Verbunden" : "Hinweis";
+  document.getElementById("title").textContent = ok
+    ? (ws ? "Verbunden: " + ws : "Workspace verbunden")
+    : "Verbindung fehlgeschlagen";
+  document.getElementById("msg").textContent = ok
+    ? "Dieser Workspace ist jetzt mit EMR Analytics verbunden. Du kannst dieses Fenster schließen."
+    : (msg || "Bitte versuche die Autorisierung erneut.");
+  document.title = (ok ? "Verbunden" : "Hinweis") + " · EMR Analytics";
+</script>
+</body>
+</html>
