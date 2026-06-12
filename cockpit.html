@@ -3,149 +3,234 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EMR · Cockpit – Client-Engagement</title>
+<title>EMR · Cockpit</title>
 <style>
-  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--amber:#f08c00;--red:#e03131}
+  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--amber:#f08c00;--red:#e03131;--violet:#7048e8}
   *{box-sizing:border-box}
   body{margin:0;background:#eef1f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:1120px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:26px 30px 34px}
+  .wrap{max-width:1040px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:24px 28px 32px}
   header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px}
   .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
-  h1{font-size:21px;margin:6px 0 0}
-  .sub{color:var(--mut);font-size:13px;margin:4px 0 0}
+  h1{font-size:20px;margin:6px 0 0}
   .logout{font-size:12px;color:var(--mut);background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
-  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 6px}
-  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
-  .kpi .v{font-size:22px;font-weight:750}.kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}
-  .kpi .v.r{color:var(--red)}.kpi .v.g{color:var(--green)}
-  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:24px 0 10px;font-weight:700}
-  .matrix{width:100%;border-collapse:separate;border-spacing:6px}
-  .matrix th{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);font-weight:700;padding:4px 6px;text-align:center;vertical-align:bottom}
-  .matrix th.cli,.matrix td.cli{text-align:left;font-weight:650;font-size:13px;white-space:nowrap;color:var(--ink)}
-  .cell{border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;border:1px solid transparent;min-width:120px}
-  .cell:hover{outline:2px solid rgba(59,91,219,.4)}
-  .cell .score{font-size:19px;font-weight:780;line-height:1}
-  .cell .out{font-size:10.5px;margin-top:5px;line-height:1.3;opacity:.85}
-  .g{background:#e6f7ec;color:#1b6e34}.a{background:#fff4e2;color:#9a5b00}.r{background:#fde7e7;color:#a82020}
-  .signals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  .sig{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px}
-  .sig h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
-  .sig li{margin:5px 0;line-height:1.4;list-style:none;padding-left:16px;position:relative}
-  .sig.risk li:before{content:"▲";color:var(--red);position:absolute;left:0;font-size:9px;top:3px}
-  .sig.chance li:before{content:"★";color:var(--accent);position:absolute;left:0;font-size:9px;top:3px}
-  .detail{margin-top:16px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--soft);display:none}
-  .detail .dh{display:flex;justify-content:space-between;align-items:center}
-  .detail h3{margin:0;font-size:15px}
-  .detail .close{cursor:pointer;color:var(--mut);border:0;background:none;font-size:18px}
-  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
-  .metric{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
-  .metric .mv{font-size:17px;font-weight:700}.metric .ml{font-size:11px;color:var(--mut)}
-  .detail a.link{display:inline-block;margin-top:12px;font-size:13px;color:var(--accent);text-decoration:none}
-  .note{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.5}
+  .toolbar{display:flex;gap:10px;align-items:center;margin:18px 0 6px;flex-wrap:wrap}
+  input.search{flex:1;min-width:200px;padding:10px 13px;border:1px solid var(--line);border-radius:9px;font-size:14px}
+  .btn{background:var(--soft);border:1px solid var(--line);border-radius:9px;padding:9px 13px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .btn.pri{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .clist{margin-top:8px}
+  .crow{display:flex;align-items:center;gap:14px;padding:13px 14px;border:1px solid var(--line);border-radius:11px;margin-bottom:9px;cursor:pointer;background:#fff}
+  .crow:hover{background:var(--soft);border-color:#c9d4ef}
+  .av{width:42px;height:42px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+  .crow .who{flex:1}
+  .crow .nm{font-weight:650;font-size:14.5px}
+  .crow .co{font-size:12.5px;color:var(--mut)}
+  .badge{font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px}
+  .b-cu{background:#e6edff;color:#2944b8}
+  .b-as{background:#eceff3;color:#5b6678}
+  .chev{color:var(--mut);font-size:18px}
+  /* detail */
+  .back{font-size:13px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;margin:14px 0 6px}
+  .dhead{display:flex;align-items:center;gap:14px;margin:4px 0 14px}
+  .dhead .nm{font-size:18px;font-weight:700}
+  .dhead .co{font-size:13px;color:var(--mut)}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 16px}
+  .seg button{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .asana-note{background:#fff7ed;border:1px solid #fcd9a8;color:#9a5b00;border-radius:10px;padding:11px 14px;font-size:13px;margin-bottom:14px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:8px}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+  .kpi .v{font-size:20px;font-weight:750}.kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}
+  .kpi .v.g{color:var(--green)}.kpi .v.a{color:var(--accent)}.kpi .v.na{color:#aab2c0;font-size:15px;font-weight:600}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin:22px 0 10px;font-weight:700}
+  .stagebar{display:flex;flex-direction:column;gap:8px}
+  .srow{display:grid;grid-template-columns:130px 1fr 60px;align-items:center;gap:10px;font-size:13px}
+  .bar{height:24px;border-radius:5px;background:var(--accent);min-width:3px}
+  .bar.hot{background:var(--red)}
+  .srow .d{text-align:right;font-weight:650;font-variant-numeric:tabular-nums}
+  .frow{display:grid;grid-template-columns:140px 1fr 40px;align-items:center;gap:10px;font-size:13px}
+  .frow .n{text-align:right;font-weight:650}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:700}
+  td.k{font-weight:650}
+  .pill{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .roas{font-weight:750}.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}
+  .muted td{color:var(--mut)}
+  .hint{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.5}
   .login{max-width:400px;margin:16vh auto;background:#141823;border:1px solid #232a3a;border-radius:20px;padding:42px 36px;text-align:center;color:#e8eaf0;box-shadow:0 30px 80px rgba(0,0,0,.4)}
   .login .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7c869c}
   .login h1{font-size:20px;margin:8px 0 18px;border:0}
   .login input{width:100%;padding:11px 13px;border-radius:10px;border:1px solid #2c3346;background:#0e121b;color:#e8eaf0;font-size:14px;margin-bottom:12px}
   .login button{width:100%;background:#7b68ee;color:#fff;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer}
   .err{color:#ff8787;font-size:13px;margin-top:12px}
-  .tag{font-size:11px;color:#b54708;border:1px solid #fcd9a8;background:#fff8ec;border-radius:999px;padding:3px 10px}
 </style>
 </head>
 <body>
 <div id="login" class="login" hidden>
   <div class="eyebrow">EMR · Cockpit</div>
-  <h1>Client-Engagement</h1>
-  <input type="password" id="pw" placeholder="EMR-Passwort" autocomplete="current-password">
-  <button id="enter">Anmelden</button>
+  <h1>Intern-Login</h1>
+  <p style="color:#9aa3b2;font-size:14px;line-height:1.6;margin:0 0 22px">Nur für EMR-Mitarbeiter. Melde dich mit deinem ClickUp-Konto an (@emr-unternehmensberatung.de).</p>
+  <a id="loginBtn" style="display:inline-block;background:#7b68ee;color:#fff;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;text-decoration:none" href="#">Login mit ClickUp</a>
   <div class="err" id="loginErr"></div>
 </div>
 
 <div id="app" class="wrap" hidden>
   <header>
-    <div>
-      <div class="brand">EMR Unternehmensberatung · Cockpit</div>
-      <h1>Client-Engagement über alle Boards</h1>
-      <p class="sub">Wie aktiv nutzt jeder Kunde die EMR-Boards – und welche Ergebnisse erzielt er. <span class="tag">Demo</span></p>
-    </div>
+    <div><div class="brand">EMR Unternehmensberatung · Cockpit</div><h1 id="htitle">Kunden</h1></div>
     <button class="logout" id="logout">Abmelden</button>
   </header>
-  <div class="kpis" id="kpis"></div>
-  <h2>Engagement-Matrix (Klick für Details)</h2>
-  <div style="overflow-x:auto"><table class="matrix" id="matrix"></table></div>
-  <div class="detail" id="detail"></div>
-  <h2>Signale</h2>
-  <div class="signals">
-    <div class="sig risk"><h3>Risiko (geringe Nutzung)</h3><ul id="risk"></ul></div>
-    <div class="sig chance"><h3>Chancen (Up-/Cross-Sell)</h3><ul id="chance"></ul></div>
-  </div>
-  <p class="note">Engagement-Score 0–100 aus Aktivität, Durchlaufzeit, Überfälligkeit und aktiven Nutzern je Board. Grün ≥70 · Gelb 40–69 · Rot &lt;40. Diese kanal- und board-übergreifende Sicht je Kunde lässt sich in Asana strukturell nicht erzeugen (Formelfelder rechnen nur pro Aufgabe, keine projekt-übergreifenden Kennzahlen, keine externen Datenquellen).</p>
+  <div id="view"></div>
 </div>
 
 <script>
 const API="https://qegfcfjjpdmdpizadjoy.supabase.co/functions/v1/analytics";
-const DASH="https://philipballerscheff-freudendahl.github.io/EMR_Neukundengewinnung_ROAS_Dashboard/index.html";
-const BOARDS=[["nk","Neukunden­gewinnung"],["bm","Bewerber­management"],["qc","Qualität (Q-Check)"],["re","Rechnungs­management"],["td","Aufgaben / To-Do"]];
-let ROWS=[];
-function key(){return sessionStorage.getItem('emr_key')||'';}
-function band(e){return e>=70?'g':e>=40?'a':'r';}
+const PAID={Facebook:"#1877f2",Google:"#34a853",Instagram:"#e1306c"};
+const eur=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0);
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const CALLBACK="https://qegfcfjjpdmdpizadjoy.supabase.co/functions/v1/oauth-callback";
+const AUTH_URL="https://app.clickup.com/api?client_id=39O92I4WWUMJBCKO8BXDAKSXAAS15NP4&redirect_uri="+encodeURIComponent(CALLBACK);
+function tok(){return localStorage.getItem('emr_token')||'';}
+let CLIENTS=[];
 
-function render(){
-  const clients=[...new Set(ROWS.map(r=>r.client))];
-  const byKey={};ROWS.forEach(r=>{byKey[r.client+'|'+r.board_key]=r;});
-  // KPIs
-  const avg=Math.round(ROWS.reduce((a,r)=>a+r.engagement,0)/ROWS.length);
-  const risk=ROWS.filter(r=>r.engagement<40).length;
-  const best=[...clients].sort((a,b)=>avgFor(b)-avgFor(a))[0];
-  function avgFor(c){const rs=ROWS.filter(r=>r.client===c);return rs.reduce((a,r)=>a+r.engagement,0)/rs.length;}
-  document.getElementById('kpis').innerHTML=[
-    ['',clients.length,'Kunden'],
-    ['',avg,'Ø Engagement (0–100)'],
-    ['r',risk,'Risiko-Signale (&lt;40)'],
-    ['g',best.split(' ')[0],'Stärkster Kunde']
-  ].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
-  // matrix
-  let html='<thead><tr><th class="cli">Kunde</th>'+BOARDS.map(b=>`<th>${b[1]}</th>`).join('')+'</tr></thead><tbody>';
-  clients.forEach(c=>{
-    html+='<tr><td class="cli">'+c+'</td>'+BOARDS.map(b=>{const r=byKey[c+'|'+b[0]];if(!r)return '<td></td>';
-      return `<td><div class="cell ${band(r.engagement)}" data-c="${encodeURIComponent(c)}" data-b="${b[0]}"><div class="score">${r.engagement}</div><div class="out">${r.outcome_text}</div></div></td>`;}).join('')+'</tr>';
-  });
-  html+='</tbody>';
-  document.getElementById('matrix').innerHTML=html;
-  document.querySelectorAll('.cell').forEach(el=>el.onclick=()=>openCell(decodeURIComponent(el.dataset.c),el.dataset.b));
-  // signals
-  const risks=ROWS.filter(r=>r.engagement<45).sort((a,b)=>a.engagement-b.engagement);
-  document.getElementById('risk').innerHTML=risks.map(r=>`<li><b>${r.client.split(' ')[0]}</b> · ${r.board}: ${r.engagement}/100 – ${r.outcome_text}</li>`).join('')||'<li>keine</li>';
-  // chances: strong outcome but mid engagement, or board barely used while client otherwise active
-  const chances=ROWS.filter(r=>r.engagement>=40&&r.engagement<70).sort((a,b)=>a.engagement-b.engagement).slice(0,4);
-  document.getElementById('chance').innerHTML=chances.map(r=>`<li><b>${r.client.split(' ')[0]}</b> · ${r.board}: Ausbaupotenzial (${r.engagement}/100)</li>`).join('')||'<li>keine</li>';
+async function api(qs){const r=await fetch(API+qs+"&token="+encodeURIComponent(tok()));if(r.status===401){localStorage.removeItem('emr_token');show('login','Kein EMR-Zugang für dieses Konto.');throw new Error('401');}return r.json();}
+function show(id,msg){['login','app'].forEach(x=>document.getElementById(x).hidden=(x!==id));const e=document.getElementById('loginErr');if(e)e.textContent=msg||'';}
+const V=()=>document.getElementById('view');
+
+/* ---------- client list ---------- */
+async function listView(){
+  document.getElementById('htitle').textContent="Kunden";
+  if(!CLIENTS.length) CLIENTS=await api("?clients=1");
+  V().innerHTML=`<div class="toolbar">
+      <input class="search" id="search" placeholder="Kunde oder Ansprechpartner suchen…">
+      <button class="btn pri" id="cross">Alle Kunden vergleichen</button></div>
+    <div class="clist" id="clist"></div>`;
+  document.getElementById('cross').onclick=crossView;
+  const inp=document.getElementById('search');
+  const draw=()=>{const t=inp.value.toLowerCase();
+    document.getElementById('clist').innerHTML=CLIENTS.filter(c=>(c.company+" "+c.contact_person).toLowerCase().includes(t))
+      .map(c=>{const ini=(c.contact_person||c.company).split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase();
+        const bcls=c.platform==='ClickUp'?'b-cu':'b-as';
+        return `<div class="crow" data-c="${esc(c.company)}"><div class="av">${esc(ini)}</div>
+          <div class="who"><div class="nm">${esc(c.contact_person)}</div><div class="co">${esc(c.company)}</div></div>
+          <span class="badge ${bcls}">${esc(c.platform)}</span><span class="chev">›</span></div>`;}).join('')
+      ||'<p style="color:var(--mut)">Kein Treffer.</p>';
+    document.querySelectorAll('#clist .crow').forEach(el=>el.onclick=()=>clientView(el.dataset.c));};
+  inp.oninput=draw;draw();
 }
-function openCell(c,bk){
-  const r=ROWS.find(x=>x.client===c&&x.board_key===bk);if(!r)return;
-  const d=document.getElementById('detail');d.style.display='block';
-  const link=bk==='nk'?`<a class="link" href="${DASH}" target="_blank">→ Neukundengewinnung-ROAS-Dashboard öffnen</a>`:'';
-  d.innerHTML=`<div class="dh"><h3>${c} · ${r.board}</h3><button class="close" onclick="document.getElementById('detail').style.display='none'">×</button></div>
-    <div class="metrics">
-      <div class="metric"><div class="mv">${r.engagement}/100</div><div class="ml">Engagement</div></div>
-      <div class="metric"><div class="mv">${r.tasks_30d}</div><div class="ml">Aufgaben (30 T)</div></div>
-      <div class="metric"><div class="mv">${r.completion_pct}%</div><div class="ml">Abschlussquote</div></div>
-      <div class="metric"><div class="mv">${r.avg_cycle_days} T</div><div class="ml">Ø Durchlaufzeit</div></div>
-      <div class="metric"><div class="mv">${r.overdue_pct}%</div><div class="ml">Überfällig</div></div>
-      <div class="metric"><div class="mv">${r.active_users}</div><div class="ml">Aktive Nutzer</div></div>
-    </div>
-    <p style="margin:12px 0 0;font-size:13px"><b>Ergebnis:</b> ${r.outcome_text}</p>${link}`;
-  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+
+/* ---------- single client ---------- */
+async function clientView(company){
+  const c=CLIENTS.find(x=>x.company===company);
+  document.getElementById('htitle').textContent=c.contact_person;
+  const boards=await api("?boards=1&client="+encodeURIComponent(company));
+  const order=['nk','bm','qc','re','td'];
+  boards.sort((a,b)=>order.indexOf(a.board_key)-order.indexOf(b.board_key));
+  const bcls=c.platform==='ClickUp'?'b-cu':'b-as';
+  V().innerHTML=`<button class="back" id="back">← Zurück zur Kundenliste</button>
+    <div class="dhead"><div class="av">${esc((c.contact_person).split(' ').map(w=>w[0]).slice(0,2).join('').toUpperCase())}</div>
+      <div><div class="nm">${esc(c.contact_person)}</div><div class="co">${esc(c.company)} &nbsp;<span class="badge ${bcls}">${esc(c.platform)}</span></div></div></div>
+    <div class="seg" id="seg">${boards.map((b,i)=>`<button data-k="${b.board_key}" class="${i===0?'on':''}">${esc(b.board)}</button>`).join('')}</div>
+    <div id="boardview"></div>`;
+  document.getElementById('back').onclick=listView;
+  const segBtns=[...document.querySelectorAll('#seg button')];
+  segBtns.forEach(btn=>btn.onclick=()=>{segBtns.forEach(b=>b.classList.remove('on'));btn.classList.add('on');boardView(c,boards.find(x=>x.board_key===btn.dataset.k));});
+  boardView(c,boards[0]);
 }
-function show(id){['login','app'].forEach(x=>document.getElementById(x).hidden=(x!==id));}
-async function load(){
-  const r=await fetch(API+"?engagement=1&key="+encodeURIComponent(key()));
-  if(r.status===401){sessionStorage.removeItem('emr_key');return show('login');}
-  ROWS=await r.json();show('app');render();
+
+async function boardView(c,b){
+  const bv=document.getElementById('boardview');
+  const asana=c.platform!=='ClickUp';
+  if(b.board_key==='nk'){ // ROAS funnel (tool-agnostic)
+    bv.innerHTML='<p style="color:var(--mut);font-size:13px">lädt…</p>';
+    const d=await api("?client="+encodeURIComponent(c.company));
+    bv.innerHTML=renderRoas(d.deals||[],d.spend||[]);
+    return;
+  }
+  // other boards: bottleneck / cycle / hours / throughput
+  const na='<span class="v na">nur mit ClickUp</span>';
+  const kpis=[
+    [asana?na:`<span class="v a">${b.cycle_days} T</span>`,'Ø Durchlaufzeit (Zeit-in-Status)'],
+    [`<span class="v">${b.throughput_30d}</span>`,'Durchsatz (30 T)'],
+    [`<span class="v">${b.open_tasks}</span>`,'Offene Aufgaben'],
+    [asana?na:`<span class="v">${b.worked_hours} h</span>`,'Aufwand (getrackte Std.)']
+  ].map(k=>`<div class="kpi">${k[0]}<div class="l">${k[1]}</div></div>`).join('');
+  let body=`<div class="kpis">${kpis}</div><p style="font-size:13px;margin:10px 2px 0"><b>Ergebnis:</b> ${esc(b.outcome_text)}</p>`;
+  if(asana){
+    body=`<div class="asana-note">Dieser Kunde nutzt <b>Asana</b>. Zeit-in-Status (Engpass-Analyse) und getrackte Stunden werden dort nicht erfasst – diese Auswertung wird erst nach dem Wechsel zu ClickUp möglich.</div>`+body;
+    bv.innerHTML=body;return;
+  }
+  const stages=await api("?stages=1&client="+encodeURIComponent(c.company)+"&board="+b.board_key);
+  const max=Math.max(...stages.map(s=>+s.avg_days),1);
+  const hot=Math.max(...stages.map(s=>+s.avg_days));
+  body+=`<h2>Zeit-in-Status je Phase &nbsp;·&nbsp; Engpass</h2><div class="stagebar">`+
+    stages.map(s=>`<div class="srow"><span>${esc(s.stage)}</span><div class="bar ${(+s.avg_days===hot)?'hot':''}" style="width:${Math.max(3,s.avg_days/max*100)}%"></div><span class="d">${s.avg_days} T</span></div>`).join('')+`</div>`+
+    `<p class="hint">Der längste Balken ist der Engpass: hier verliert der Prozess die meiste Zeit. In Asana ist diese Phasen-Verweildauer nicht erfasst.</p>`;
+  bv.innerHTML=body;
 }
-async function tryKey(pw){sessionStorage.setItem('emr_key',pw);const r=await fetch(API+"?engagement=1&key="+encodeURIComponent(pw));if(r.status===401){document.getElementById('loginErr').textContent='Falsches Passwort.';sessionStorage.removeItem('emr_key');return;}load();}
-document.getElementById('enter').onclick=()=>tryKey(document.getElementById('pw').value);
-document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryKey(document.getElementById('pw').value);});
-document.getElementById('logout').onclick=()=>{sessionStorage.removeItem('emr_key');location.reload();};
-(function(){if(key())load();else show('login');})();
+
+function renderRoas(DEALS,SPEND){
+  const won=DEALS.filter(d=>d.status==='gewonnen');
+  const wonRev=won.reduce((a,d)=>a+(+d.wert),0);
+  const pipe=DEALS.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);
+  const decided=DEALS.filter(d=>['gewonnen','verloren'].includes(d.status)).length;
+  const spendInRange=q=>SPEND.filter(s=>s.kanal===q).reduce((a,s)=>a+(+s.spend),0);
+  const spendTotal=Object.keys(PAID).reduce((a,q)=>a+spendInRange(q),0);
+  const roas=spendTotal?wonRev/spendTotal:null;
+  const days=(a,b)=>(new Date(b)-new Date(a))/86400000;
+  const cyc=won.length?(won.reduce((a,d)=>a+days(d.anfrage_am,d.gewonnen_am),0)/won.length):null;
+  const winRate=decided?Math.round(won.length/decided*100):0;
+  const kp=[['g',eur(wonRev),`Umsatz gewonnen (${won.length})`],['',eur(pipe),'Offene Pipeline'],['a',roas!=null?roas.toFixed(2)+'×':'–','ROAS gesamt'],['',cyc!=null?cyc.toFixed(1)+' T':'–','Ø Sales-Cycle']]
+    .map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+  const f=[['Anfragen',DEALS.length],['Qualifiziert',DEALS.filter(d=>d.status!=='anfrage unqualifiziert').length],['Besichtigt',DEALS.filter(d=>d.besichtigung_am).length],['Angebot',DEALS.filter(d=>d.angebot_am).length],['Gewonnen',won.length]];
+  const tot=DEALS.length||1;
+  const funnel=f.map((r,i)=>`<div class="frow"><span>${r[0]}</span><div class="bar" style="width:${Math.max(3,r[1]/tot*100)}%;background:${i===4?'var(--green)':'var(--accent)'}"></div><span class="n">${r[1]}</span></div>`).join('');
+  const chans=[...new Set(DEALS.map(d=>d.quelle))];
+  const cls=r=>r==null?'':(r>=1.7?'good':r>=1?'mid':'bad');
+  const rows=chans.map(q=>{const cd=DEALS.filter(d=>d.quelle===q);const cw=cd.filter(d=>d.status==='gewonnen');const rev=cw.reduce((a,d)=>a+(+d.wert),0);const sp=spendInRange(q);return{q,leads:cd.length,won:cw.length,rev,sp,ro:sp?rev/sp:null};}).sort((a,b)=>b.sp-a.sp||b.rev-a.rev);
+  const table=`<table><thead><tr><th>Kanal</th><th>Leads</th><th>Gew.</th><th>Umsatz</th><th>Ad-Spend</th><th>ROAS</th></tr></thead><tbody>`+
+    rows.map(r=>`<tr class="${r.sp?'':'muted'}"><td class="k"><span class="pill" style="background:${PAID[r.q]||'#adb5bd'}"></span>${esc(r.q)}</td><td>${r.leads}</td><td>${r.won}</td><td>${eur(r.rev)}</td><td>${r.sp?eur(r.sp):'–'}</td><td class="roas ${cls(r.ro)}">${r.ro!=null?r.ro.toFixed(2)+'×':'organisch'}</td></tr>`).join('')+`</tbody></table>`;
+  return `<div class="kpis">${kp}</div><h2>Vertriebs-Funnel</h2><div class="stagebar">${funnel}</div><h2>Return on Ad Spend je Kanal</h2>${table}`;
+}
+
+/* ---------- cross-client ---------- */
+async function crossView(){
+  document.getElementById('htitle').textContent="Alle Kunden";
+  const rows=await api("?crossboard=1");
+  const boards=[['nk','Neukundengewinnung'],['bm','Bewerbermanagement'],['qc','Qualität (Q-Check)'],['re','Rechnungsmanagement'],['td','Aufgaben / To-Do']];
+  const metrics=[['cycle_days','Ø Durchlaufzeit (T)',true],['worked_hours','Aufwand (Std.)',true],['throughput_30d','Durchsatz (30 T)',false],['open_tasks','Offene Aufgaben',false]];
+  V().innerHTML=`<button class="back" id="back">← Zurück zur Kundenliste</button>
+    <div class="seg" id="bsel">${boards.map((b,i)=>`<button data-k="${b[0]}" class="${i===0?'on':''}">${b[1]}</button>`).join('')}</div>
+    <div class="seg" id="msel">${metrics.map((m,i)=>`<button data-k="${m[0]}" class="${i===0?'on':''}">${m[1]}</button>`).join('')}</div>
+    <div id="cc"></div>`;
+  document.getElementById('back').onclick=listView;
+  let bk='nk',mk='cycle_days';
+  const drawSel=(grp,setter)=>{const btns=[...document.querySelectorAll('#'+grp+' button')];btns.forEach(btn=>btn.onclick=()=>{btns.forEach(b=>b.classList.remove('on'));btn.classList.add('on');setter(btn.dataset.k);draw();});};
+  drawSel('bsel',k=>bk=k);drawSel('msel',k=>mk=k);
+  const clientPlat={};CLIENTS.forEach(c=>clientPlat[c.company]=c.platform);
+  function draw(){
+    const data=rows.filter(r=>r.board_key===bk);
+    const vals=data.map(r=>({client:r.client,v:r[mk],plat:clientPlat[r.client]})).sort((a,b)=>(b.v||0)-(a.v||0));
+    const max=Math.max(...vals.map(v=>+v.v||0),1);
+    const clickOnly=['cycle_days','worked_hours'].includes(mk);
+    document.getElementById('cc').innerHTML=`<h2>Vergleich · ${metrics.find(m=>m[0]===mk)[1]}</h2><div class="stagebar">`+
+      vals.map(v=>{ if(v.v==null) return `<div class="srow"><span>${esc(v.client.split(' ')[0])}</span><div class="bar" style="width:3%;background:#dfe3ea"></div><span class="d" style="color:#aab2c0;font-size:11px">— ${v.plat}</span></div>`;
+        return `<div class="srow"><span>${esc(v.client.split(' ')[0])}</span><div class="bar" style="width:${Math.max(3,v.v/max*100)}%"></div><span class="d">${v.v}</span></div>`;}).join('')+`</div>`+
+      (clickOnly?`<p class="hint">Diese Kennzahl liefert nur ClickUp. Kunden auf Asana erscheinen ohne Wert – ein direktes Argument für den Wechsel.</p>`:'');
+  }
+  draw();
+}
+
+/* ---------- auth (Login mit ClickUp, nur EMR-Domain) ---------- */
+async function boot(){try{const me=await api("?me=1");if(me.role!=='emr'){localStorage.removeItem('emr_token');return show('login','Dieses Konto hat keinen EMR-Zugang.');}show('app');listView();}catch(e){}}
+document.getElementById('logout').onclick=()=>{localStorage.removeItem('emr_token');location.reload();};
+(function(){
+  document.getElementById('loginBtn').href=AUTH_URL;
+  const hsh=new URLSearchParams(location.hash.slice(1));
+  if(hsh.get('t')){localStorage.setItem('emr_token',hsh.get('t'));history.replaceState(null,'',location.pathname);}
+  if(hsh.get('err')){show('login',decodeURIComponent(hsh.get('err')));return;}
+  if(tok())boot();else show('login');
+})();
 </script>
 </body>
 </html>
