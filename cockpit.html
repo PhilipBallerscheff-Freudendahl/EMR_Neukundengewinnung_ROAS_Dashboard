@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMR · Cockpit – Client-Engagement</title>
+<style>
+  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--amber:#f08c00;--red:#e03131}
+  *{box-sizing:border-box}
+  body{margin:0;background:#eef1f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1120px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:26px 30px 34px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px}
+  .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:21px;margin:6px 0 0}
+  .sub{color:var(--mut);font-size:13px;margin:4px 0 0}
+  .logout{font-size:12px;color:var(--mut);background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 6px}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .kpi .v{font-size:22px;font-weight:750}.kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}
+  .kpi .v.r{color:var(--red)}.kpi .v.g{color:var(--green)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:24px 0 10px;font-weight:700}
+  .matrix{width:100%;border-collapse:separate;border-spacing:6px}
+  .matrix th{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--mut);font-weight:700;padding:4px 6px;text-align:center;vertical-align:bottom}
+  .matrix th.cli,.matrix td.cli{text-align:left;font-weight:650;font-size:13px;white-space:nowrap;color:var(--ink)}
+  .cell{border-radius:10px;padding:10px 8px;text-align:center;cursor:pointer;border:1px solid transparent;min-width:120px}
+  .cell:hover{outline:2px solid rgba(59,91,219,.4)}
+  .cell .score{font-size:19px;font-weight:780;line-height:1}
+  .cell .out{font-size:10.5px;margin-top:5px;line-height:1.3;opacity:.85}
+  .g{background:#e6f7ec;color:#1b6e34}.a{background:#fff4e2;color:#9a5b00}.r{background:#fde7e7;color:#a82020}
+  .signals{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .sig{border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px}
+  .sig h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut)}
+  .sig li{margin:5px 0;line-height:1.4;list-style:none;padding-left:16px;position:relative}
+  .sig.risk li:before{content:"▲";color:var(--red);position:absolute;left:0;font-size:9px;top:3px}
+  .sig.chance li:before{content:"★";color:var(--accent);position:absolute;left:0;font-size:9px;top:3px}
+  .detail{margin-top:16px;border:1px solid var(--line);border-radius:12px;padding:16px 18px;background:var(--soft);display:none}
+  .detail .dh{display:flex;justify-content:space-between;align-items:center}
+  .detail h3{margin:0;font-size:15px}
+  .detail .close{cursor:pointer;color:var(--mut);border:0;background:none;font-size:18px}
+  .metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .metric{background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .metric .mv{font-size:17px;font-weight:700}.metric .ml{font-size:11px;color:var(--mut)}
+  .detail a.link{display:inline-block;margin-top:12px;font-size:13px;color:var(--accent);text-decoration:none}
+  .note{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.5}
+  .login{max-width:400px;margin:16vh auto;background:#141823;border:1px solid #232a3a;border-radius:20px;padding:42px 36px;text-align:center;color:#e8eaf0;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+  .login .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7c869c}
+  .login h1{font-size:20px;margin:8px 0 18px;border:0}
+  .login input{width:100%;padding:11px 13px;border-radius:10px;border:1px solid #2c3346;background:#0e121b;color:#e8eaf0;font-size:14px;margin-bottom:12px}
+  .login button{width:100%;background:#7b68ee;color:#fff;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer}
+  .err{color:#ff8787;font-size:13px;margin-top:12px}
+  .tag{font-size:11px;color:#b54708;border:1px solid #fcd9a8;background:#fff8ec;border-radius:999px;padding:3px 10px}
+</style>
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <div class="eyebrow">EMR · Cockpit</div>
+  <h1>Client-Engagement</h1>
+  <input type="password" id="pw" placeholder="EMR-Passwort" autocomplete="current-password">
+  <button id="enter">Anmelden</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div id="app" class="wrap" hidden>
+  <header>
+    <div>
+      <div class="brand">EMR Unternehmensberatung · Cockpit</div>
+      <h1>Client-Engagement über alle Boards</h1>
+      <p class="sub">Wie aktiv nutzt jeder Kunde die EMR-Boards – und welche Ergebnisse erzielt er. <span class="tag">Demo</span></p>
+    </div>
+    <button class="logout" id="logout">Abmelden</button>
+  </header>
+  <div class="kpis" id="kpis"></div>
+  <h2>Engagement-Matrix (Klick für Details)</h2>
+  <div style="overflow-x:auto"><table class="matrix" id="matrix"></table></div>
+  <div class="detail" id="detail"></div>
+  <h2>Signale</h2>
+  <div class="signals">
+    <div class="sig risk"><h3>Risiko (geringe Nutzung)</h3><ul id="risk"></ul></div>
+    <div class="sig chance"><h3>Chancen (Up-/Cross-Sell)</h3><ul id="chance"></ul></div>
+  </div>
+  <p class="note">Engagement-Score 0–100 aus Aktivität, Durchlaufzeit, Überfälligkeit und aktiven Nutzern je Board. Grün ≥70 · Gelb 40–69 · Rot &lt;40. Diese kanal- und board-übergreifende Sicht je Kunde lässt sich in Asana strukturell nicht erzeugen (Formelfelder rechnen nur pro Aufgabe, keine projekt-übergreifenden Kennzahlen, keine externen Datenquellen).</p>
+</div>
+
+<script>
+const API="https://qegfcfjjpdmdpizadjoy.supabase.co/functions/v1/analytics";
+const DASH="https://philipballerscheff-freudendahl.github.io/EMR_Neukundengewinnung_ROAS_Dashboard/index.html";
+const BOARDS=[["nk","Neukunden­gewinnung"],["bm","Bewerber­management"],["qc","Qualität (Q-Check)"],["re","Rechnungs­management"],["td","Aufgaben / To-Do"]];
+let ROWS=[];
+function key(){return sessionStorage.getItem('emr_key')||'';}
+function band(e){return e>=70?'g':e>=40?'a':'r';}
+
+function render(){
+  const clients=[...new Set(ROWS.map(r=>r.client))];
+  const byKey={};ROWS.forEach(r=>{byKey[r.client+'|'+r.board_key]=r;});
+  // KPIs
+  const avg=Math.round(ROWS.reduce((a,r)=>a+r.engagement,0)/ROWS.length);
+  const risk=ROWS.filter(r=>r.engagement<40).length;
+  const best=[...clients].sort((a,b)=>avgFor(b)-avgFor(a))[0];
+  function avgFor(c){const rs=ROWS.filter(r=>r.client===c);return rs.reduce((a,r)=>a+r.engagement,0)/rs.length;}
+  document.getElementById('kpis').innerHTML=[
+    ['',clients.length,'Kunden'],
+    ['',avg,'Ø Engagement (0–100)'],
+    ['r',risk,'Risiko-Signale (&lt;40)'],
+    ['g',best.split(' ')[0],'Stärkster Kunde']
+  ].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+  // matrix
+  let html='<thead><tr><th class="cli">Kunde</th>'+BOARDS.map(b=>`<th>${b[1]}</th>`).join('')+'</tr></thead><tbody>';
+  clients.forEach(c=>{
+    html+='<tr><td class="cli">'+c+'</td>'+BOARDS.map(b=>{const r=byKey[c+'|'+b[0]];if(!r)return '<td></td>';
+      return `<td><div class="cell ${band(r.engagement)}" data-c="${encodeURIComponent(c)}" data-b="${b[0]}"><div class="score">${r.engagement}</div><div class="out">${r.outcome_text}</div></div></td>`;}).join('')+'</tr>';
+  });
+  html+='</tbody>';
+  document.getElementById('matrix').innerHTML=html;
+  document.querySelectorAll('.cell').forEach(el=>el.onclick=()=>openCell(decodeURIComponent(el.dataset.c),el.dataset.b));
+  // signals
+  const risks=ROWS.filter(r=>r.engagement<45).sort((a,b)=>a.engagement-b.engagement);
+  document.getElementById('risk').innerHTML=risks.map(r=>`<li><b>${r.client.split(' ')[0]}</b> · ${r.board}: ${r.engagement}/100 – ${r.outcome_text}</li>`).join('')||'<li>keine</li>';
+  // chances: strong outcome but mid engagement, or board barely used while client otherwise active
+  const chances=ROWS.filter(r=>r.engagement>=40&&r.engagement<70).sort((a,b)=>a.engagement-b.engagement).slice(0,4);
+  document.getElementById('chance').innerHTML=chances.map(r=>`<li><b>${r.client.split(' ')[0]}</b> · ${r.board}: Ausbaupotenzial (${r.engagement}/100)</li>`).join('')||'<li>keine</li>';
+}
+function openCell(c,bk){
+  const r=ROWS.find(x=>x.client===c&&x.board_key===bk);if(!r)return;
+  const d=document.getElementById('detail');d.style.display='block';
+  const link=bk==='nk'?`<a class="link" href="${DASH}" target="_blank">→ Neukundengewinnung-ROAS-Dashboard öffnen</a>`:'';
+  d.innerHTML=`<div class="dh"><h3>${c} · ${r.board}</h3><button class="close" onclick="document.getElementById('detail').style.display='none'">×</button></div>
+    <div class="metrics">
+      <div class="metric"><div class="mv">${r.engagement}/100</div><div class="ml">Engagement</div></div>
+      <div class="metric"><div class="mv">${r.tasks_30d}</div><div class="ml">Aufgaben (30 T)</div></div>
+      <div class="metric"><div class="mv">${r.completion_pct}%</div><div class="ml">Abschlussquote</div></div>
+      <div class="metric"><div class="mv">${r.avg_cycle_days} T</div><div class="ml">Ø Durchlaufzeit</div></div>
+      <div class="metric"><div class="mv">${r.overdue_pct}%</div><div class="ml">Überfällig</div></div>
+      <div class="metric"><div class="mv">${r.active_users}</div><div class="ml">Aktive Nutzer</div></div>
+    </div>
+    <p style="margin:12px 0 0;font-size:13px"><b>Ergebnis:</b> ${r.outcome_text}</p>${link}`;
+  d.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function show(id){['login','app'].forEach(x=>document.getElementById(x).hidden=(x!==id));}
+async function load(){
+  const r=await fetch(API+"?engagement=1&key="+encodeURIComponent(key()));
+  if(r.status===401){sessionStorage.removeItem('emr_key');return show('login');}
+  ROWS=await r.json();show('app');render();
+}
+async function tryKey(pw){sessionStorage.setItem('emr_key',pw);const r=await fetch(API+"?engagement=1&key="+encodeURIComponent(pw));if(r.status===401){document.getElementById('loginErr').textContent='Falsches Passwort.';sessionStorage.removeItem('emr_key');return;}load();}
+document.getElementById('enter').onclick=()=>tryKey(document.getElementById('pw').value);
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryKey(document.getElementById('pw').value);});
+document.getElementById('logout').onclick=()=>{sessionStorage.removeItem('emr_key');location.reload();};
+(function(){if(key())load();else show('login');})();
+</script>
+</body>
+</html>
