@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMR · Intern – Kundenübersicht</title>
+<style>
+  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--red:#e03131;--amber:#f08c00}
+  *{box-sizing:border-box}
+  body{margin:0;background:#eef1f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1000px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:26px 30px 34px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px}
+  .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:21px;margin:6px 0 0}
+  .tag{font-size:11px;color:#b54708;border:1px solid #fcd9a8;background:#fff8ec;border-radius:999px;padding:3px 10px}
+  .logout{font-size:12px;color:var(--mut);background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer}
+  table{width:100%;border-collapse:collapse;font-size:13px;margin-top:18px}
+  th,td{padding:11px 10px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:700}
+  tbody tr{cursor:pointer}
+  tbody tr:hover{background:var(--soft)}
+  td.k{font-weight:650}
+  .roas{font-weight:750}.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}
+  .chev{color:var(--mut)}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:6px}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .kpi .v{font-size:21px;font-weight:750}.kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}.kpi .v.g{color:var(--green)}.kpi .v.a{color:var(--accent)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:24px 0 10px;font-weight:700}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:14px 0 6px}
+  .controls label{font-size:11px;color:var(--mut);display:block;margin-bottom:3px;text-transform:uppercase}
+  .controls input[type=date]{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .presets{display:flex;gap:6px;margin-left:auto}
+  .presets button{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer}
+  .range-note{font-size:12px;color:var(--mut);margin:2px 0 14px}
+  .funnel{display:flex;flex-direction:column;gap:7px}
+  .frow{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:10px;font-size:13px}
+  .bar{height:22px;background:var(--accent);border-radius:5px;min-width:2px}
+  .frow .n{text-align:right;font-weight:650}
+  .pill{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .back{font-size:13px;color:var(--accent);background:none;border:0;cursor:pointer;padding:0;margin-bottom:4px}
+  .login{max-width:400px;margin:16vh auto;background:#141823;border:1px solid #232a3a;border-radius:20px;padding:42px 36px;text-align:center;color:#e8eaf0;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+  .login .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7c869c}
+  .login h1{font-size:20px;margin:8px 0 18px;border:0}
+  .login input{width:100%;padding:11px 13px;border-radius:10px;border:1px solid #2c3346;background:#0e121b;color:#e8eaf0;font-size:14px;margin-bottom:12px}
+  .login button{width:100%;background:#7b68ee;color:#fff;border:0;border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer}
+  .err{color:#ff8787;font-size:13px;margin-top:12px}
+</style>
+</head>
+<body>
+<div id="login" class="login" hidden>
+  <div class="eyebrow">EMR · Intern</div>
+  <h1>Kundenübersicht</h1>
+  <input type="password" id="pw" placeholder="EMR-Passwort" autocomplete="current-password">
+  <button id="enter">Anmelden</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div id="overview" class="wrap" hidden>
+  <header>
+    <div><div class="brand">EMR Unternehmensberatung · Intern</div><h1>Kundenübersicht</h1></div>
+    <button class="logout" id="logout1">Abmelden</button>
+  </header>
+  <div class="kpis" id="ovKpis"></div>
+  <h2>Kunden (Klick für Drill-down)</h2>
+  <div id="ovTable"></div>
+</div>
+
+<div id="detail" class="wrap" hidden>
+  <header>
+    <div><div class="brand">EMR · Intern</div><h1 id="clientName">Kunde</h1></div>
+    <button class="logout" id="logout2">Abmelden</button>
+  </header>
+  <button class="back" id="back">← Zurück zur Übersicht</button>
+  <div class="controls">
+    <div><label>Von</label><input type="date" id="von"></div>
+    <div><label>Bis</label><input type="date" id="bis"></div>
+    <div class="presets"><button data-days="30">30 T</button><button data-days="60">60 T</button><button data-all="1">Gesamt</button></div>
+  </div>
+  <div class="range-note" id="rangeNote"></div>
+  <div class="kpis" id="kpis"></div>
+  <h2>Vertriebs-Funnel</h2>
+  <div class="funnel" id="funnel"></div>
+  <h2>Return on Ad Spend je Kanal</h2>
+  <div id="roasWrap"></div>
+</div>
+
+<script>
+const API="https://qegfcfjjpdmdpizadjoy.supabase.co/functions/v1/analytics";
+const PAID={Facebook:"#1877f2",Google:"#34a853",Instagram:"#e1306c"};
+const eur=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0);
+const inR=(d,v,b)=>d&&d>=v&&d<=b;const days=(a,b)=>(new Date(b)-new Date(a))/86400000;
+const TODAY="2026-06-12";let DEALS=[],SPEND=[];
+function key(){return sessionStorage.getItem('emr_key')||'';}
+function spendInRange(q,v,b){return SPEND.filter(s=>s.kanal===q&&s.date_start<=b&&s.date_stop>=v).reduce((a,s)=>a+(+s.spend),0);}
+function minAnfrage(){return DEALS.map(d=>d.anfrage_am).filter(Boolean).sort()[0]||'2026-04-01';}
+
+function render(){
+  const v=document.getElementById('von').value,b=document.getElementById('bis').value;
+  document.getElementById('rangeNote').textContent=`Zeitraum: ${v} bis ${b}`;
+  const cohort=DEALS.filter(d=>inR(d.anfrage_am,v,b));
+  const won=cohort.filter(d=>d.status==='gewonnen');
+  const wonRev=won.reduce((a,d)=>a+(+d.wert),0);
+  const pipe=cohort.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);
+  const decided=cohort.filter(d=>['gewonnen','verloren'].includes(d.status)).length;
+  const spendTotal=Object.keys(PAID).reduce((a,q)=>a+spendInRange(q,v,b),0);
+  const roas=spendTotal?wonRev/spendTotal:null;
+  const cyc=won.length?(won.reduce((a,d)=>a+days(d.anfrage_am,d.gewonnen_am),0)/won.length):null;
+  const winRate=decided?Math.round(won.length/decided*100):0;
+  document.getElementById('kpis').innerHTML=[['g',eur(wonRev),`Umsatz gewonnen (${won.length})`],['',eur(pipe),'Offene Pipeline'],['a',roas!=null?roas.toFixed(2)+'×':'–','ROAS gesamt'],['',eur(spendTotal),'Ad-Spend (Zeitraum)'],['',cyc!=null?cyc.toFixed(1)+' Tage':'–','Ø Sales-Cycle'],['',winRate+' %','Win-Rate']].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+  const tot=cohort.length||1;
+  const f=[['Anfragen',cohort.length],['Qualifiziert',cohort.filter(d=>d.status!=='anfrage unqualifiziert').length],['Besichtigt',cohort.filter(d=>d.besichtigung_am).length],['Angebot',cohort.filter(d=>d.angebot_am).length],['Entschieden',decided],['Gewonnen',won.length]];
+  document.getElementById('funnel').innerHTML=f.map((r,i)=>`<div class="frow"><span>${r[0]}</span><div class="bar" style="width:${Math.max(2,r[1]/tot*100)}%;background:${i===5?'var(--green)':'var(--accent)'}"></div><span class="n">${r[1]}</span></div>`).join('');
+  const chans=[...new Set(cohort.map(d=>d.quelle))];
+  let rows=chans.map(q=>{const cd=cohort.filter(d=>d.quelle===q);const cw=cd.filter(d=>d.status==='gewonnen');const rev=cw.reduce((a,d)=>a+(+d.wert),0);const pl=cd.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);const sp=spendInRange(q,v,b);return {q,leads:cd.length,won:cw.length,rev,pl,sp,ro:sp?rev/sp:null};}).sort((a,b2)=>b2.sp-a.sp||b2.rev-a.rev);
+  const cls=r=>r.ro==null?'':(r.ro>=1.7?'good':r.ro>=1?'mid':'bad');
+  document.getElementById('roasWrap').innerHTML=`<table><thead><tr><th>Kanal</th><th>Leads</th><th>Gew.</th><th>Umsatz</th><th>Pipeline</th><th>Ad-Spend</th><th>ROAS</th></tr></thead><tbody>`+rows.map(r=>`<tr><td class="k"><span class="pill" style="background:${PAID[r.q]||'#adb5bd'}"></span>${r.q}</td><td>${r.leads}</td><td>${r.won}</td><td>${eur(r.rev)}</td><td>${eur(r.pl)}</td><td>${r.sp?eur(r.sp):'–'}</td><td class="roas ${cls(r)}">${r.ro!=null?r.ro.toFixed(2)+'×':'organisch'}</td></tr>`).join('')+`</tbody></table>`;
+}
+function wireControls(){
+  document.querySelectorAll('#detail .presets button').forEach(btn=>btn.onclick=()=>{
+    if(btn.dataset.all){document.getElementById('von').value=minAnfrage();}else{const d=new Date(TODAY);d.setDate(d.getDate()-parseInt(btn.dataset.days));document.getElementById('von').value=d.toISOString().slice(0,10);}
+    document.getElementById('bis').value=TODAY;render();
+  });
+  document.getElementById('von').onchange=render;document.getElementById('bis').onchange=render;
+}
+
+function show(id){['login','overview','detail'].forEach(x=>document.getElementById(x).hidden=(x!==id));}
+
+async function loadOverview(){
+  const r=await fetch(API+"?summary=1&key="+encodeURIComponent(key()));
+  if(r.status===401){sessionStorage.removeItem('emr_key');return show('login');}
+  const data=await r.json();
+  const rows=data.map(c=>({...c,roas:c.ad_spend>0?(+c.umsatz)/(+c.ad_spend):null})).sort((a,b)=>(+b.umsatz)-(+a.umsatz));
+  const totUms=rows.reduce((a,c)=>a+(+c.umsatz),0),totSp=rows.reduce((a,c)=>a+(+c.ad_spend),0),totPipe=rows.reduce((a,c)=>a+(+c.pipeline),0);
+  document.getElementById('ovKpis').innerHTML=[['',rows.length,'Verbundene Kunden'],['g',eur(totUms),'Umsatz gewonnen gesamt'],['a',totSp?(totUms/totSp).toFixed(2)+'×':'–','ROAS gesamt'],['',eur(totPipe),'Pipeline gesamt'],['',eur(totSp),'Ad-Spend gesamt'],['',rows.reduce((a,c)=>a+c.deals,0),'Deals gesamt']].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+  const cls=r=>r==null?'':(r>=1.7?'good':r>=1?'mid':'bad');
+  document.getElementById('ovTable').innerHTML=`<table><thead><tr><th>Kunde</th><th>Deals</th><th>Gewonnen</th><th>Umsatz</th><th>Pipeline</th><th>Ad-Spend</th><th>ROAS</th><th></th></tr></thead><tbody>`+rows.map(c=>`<tr data-c="${encodeURIComponent(c.client)}"><td class="k">${c.client}</td><td>${c.deals}</td><td>${c.gewonnen}</td><td>${eur(+c.umsatz)}</td><td>${eur(+c.pipeline)}</td><td>${eur(+c.ad_spend)}</td><td class="roas ${cls(c.roas)}">${c.roas!=null?c.roas.toFixed(2)+'×':'–'}</td><td class="chev">›</td></tr>`).join('')+`</tbody></table>`;
+  document.querySelectorAll('#ovTable tbody tr').forEach(tr=>tr.onclick=()=>openClient(decodeURIComponent(tr.dataset.c)));
+  show('overview');
+}
+async function openClient(name){
+  const r=await fetch(API+"?client="+encodeURIComponent(name)+"&key="+encodeURIComponent(key()));
+  if(r.status===401){sessionStorage.removeItem('emr_key');return show('login');}
+  const d=await r.json();DEALS=d.deals||[];SPEND=d.spend||[];
+  document.getElementById('clientName').textContent=d.name||name;
+  document.getElementById('von').value=minAnfrage();document.getElementById('bis').value=TODAY;
+  wireControls();render();show('detail');
+}
+async function tryKey(pw){
+  sessionStorage.setItem('emr_key',pw);
+  const r=await fetch(API+"?summary=1&key="+encodeURIComponent(pw));
+  if(r.status===401){document.getElementById('loginErr').textContent='Falsches Passwort.';sessionStorage.removeItem('emr_key');return;}
+  loadOverview();
+}
+document.getElementById('enter').onclick=()=>tryKey(document.getElementById('pw').value);
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')tryKey(document.getElementById('pw').value);});
+document.getElementById('back').onclick=loadOverview;
+document.getElementById('logout1').onclick=document.getElementById('logout2').onclick=()=>{sessionStorage.removeItem('emr_key');location.reload();};
+(function init(){ if(key())loadOverview(); else show('login'); })();
+</script>
+</body>
+</html>
