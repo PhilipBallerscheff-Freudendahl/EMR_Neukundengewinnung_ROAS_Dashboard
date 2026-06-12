@@ -3,98 +3,73 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EMR · Mein ROAS Dashboard</title>
+<title>EMR · Mein Dashboard</title>
 <style>
-  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--red:#e03131;--amber:#f08c00}
+  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--amber:#f08c00;--red:#e03131}
   *{box-sizing:border-box}
   body{margin:0;background:#eef1f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
-  .wrap{max-width:980px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:26px 30px 34px}
+  .wrap{max-width:1000px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:24px 28px 32px}
   header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px;position:relative}
   .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
-  h1{font-size:21px;margin:6px 0 0}
-  .gear{background:var(--soft);border:1px solid var(--line);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:16px;color:var(--mut);display:flex;align-items:center;justify-content:center}
-  .gear:hover{background:#eef2fb}
-  .panel{position:absolute;right:0;top:46px;width:288px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 44px rgba(15,23,41,.16);padding:14px;z-index:20}
+  h1{font-size:20px;margin:6px 0 0}
+  .gear{background:var(--soft);border:1px solid var(--line);border-radius:9px;width:36px;height:36px;cursor:pointer;font-size:16px;color:var(--mut)}
+  .panel{position:absolute;right:0;top:46px;width:290px;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 44px rgba(15,23,41,.16);padding:14px;z-index:20}
   .panel h3{margin:0 0 2px;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
-  .panel .who{font-size:13px;color:var(--ink);margin:0 0 12px;font-weight:600}
+  .panel .who{font-size:13px;font-weight:600;margin:0 0 12px}
   .panel .row{display:block;width:100%;text-align:left;background:none;border:0;padding:9px 8px;border-radius:8px;font-size:13px;color:var(--ink);cursor:pointer}
-  .panel .row:hover{background:var(--soft)}
-  .panel .sep{height:1px;background:var(--line);margin:8px 0}
-  .panel .danger{color:var(--red)}
+  .panel .row:hover{background:var(--soft)}.panel .sep{height:1px;background:var(--line);margin:8px 0}.panel .danger{color:var(--red)}
   .panel .note{font-size:11px;color:var(--mut);line-height:1.5;margin:8px 2px 0}
-  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:18px 0 6px}
-  .controls label{font-size:11px;color:var(--mut);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
-  .controls input[type=date]{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:13px}
-  .presets{display:flex;gap:6px;margin-left:auto}
-  .presets button{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:var(--ink)}
-  .range-note{font-size:12px;color:var(--mut);margin:2px 0 16px}
-  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
-  .kpi .v{font-size:22px;font-weight:750;letter-spacing:-.02em}
-  .kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}
-  .kpi .v.g{color:var(--green)}.kpi .v.a{color:var(--accent)}
-  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:24px 0 10px;font-weight:700}
-  .funnel{display:flex;flex-direction:column;gap:7px}
-  .frow{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:10px;font-size:13px}
-  .bar{height:22px;background:var(--accent);border-radius:5px;min-width:2px;transition:width .25s}
-  .frow .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;margin:18px 0 16px}
+  .seg button{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;cursor:pointer;color:var(--ink)}
+  .seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:12px 14px}
+  .kpi .v{font-size:20px;font-weight:750}.kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}.kpi .v.g{color:var(--green)}.kpi .v.a{color:var(--accent)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--mut);margin:22px 0 10px;font-weight:700}
+  .stagebar{display:flex;flex-direction:column;gap:8px}
+  .srow{display:grid;grid-template-columns:140px 1fr 60px;align-items:center;gap:10px;font-size:13px}
+  .bar{height:24px;border-radius:5px;background:var(--accent);min-width:3px}.bar.hot{background:var(--red)}
+  .srow .d{text-align:right;font-weight:650}
+  .frow{display:grid;grid-template-columns:140px 1fr 40px;align-items:center;gap:10px;font-size:13px}.frow .n{text-align:right;font-weight:650}
   table{width:100%;border-collapse:collapse;font-size:12.5px}
-  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line)}
-  th:first-child,td:first-child{text-align:left}
-  th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:700}
-  td.k{font-weight:650}
-  .pill{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
-  .roas{font-weight:750}.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}
-  .muted td{color:var(--mut)}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line)}th:first-child,td:first-child{text-align:left}
+  th{font-size:11px;text-transform:uppercase;color:var(--mut);font-weight:700}td.k{font-weight:650}
+  .pill{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+  .roas{font-weight:750}.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}.muted td{color:var(--mut)}
+  .hint{font-size:11.5px;color:var(--mut);margin-top:14px;line-height:1.5}
   .login{max-width:440px;margin:14vh auto;background:#141823;border:1px solid #232a3a;border-radius:20px;padding:44px 38px;text-align:center;color:#e8eaf0;box-shadow:0 30px 80px rgba(0,0,0,.4)}
   .login .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#7c869c}
-  .login h1{font-size:22px;margin:8px 0 6px;border:0}
-  .login p{color:#9aa3b2;font-size:14px;line-height:1.6;margin:0 0 22px}
+  .login h1{font-size:22px;margin:8px 0 6px;border:0}.login p{color:#9aa3b2;font-size:14px;line-height:1.6;margin:0 0 22px}
   .cta{display:inline-block;background:#7b68ee;color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;cursor:pointer;text-decoration:none}
-  .err{color:#ff8787;font-size:13px;margin-top:14px}
-  .ok{color:#69db7c;font-size:13px;margin-top:14px}
-  .hint{color:#5b6472;font-size:11.5px;margin-top:22px}
+  .err{color:#ff8787;font-size:13px;margin-top:14px}.ok{color:#69db7c;font-size:13px;margin-top:14px}
+  .hint2{color:#5b6472;font-size:11.5px;margin-top:22px}
 </style>
 </head>
 <body>
 <div id="login" class="login" hidden>
   <div class="eyebrow">EMR · ClickUp Analytics</div>
-  <h1>Mein ROAS Dashboard</h1>
-  <p>Melde dich mit deinem ClickUp-Workspace an, um deine Vertriebs- und Werbe-Auswertung zu sehen.</p>
+  <h1>Mein Dashboard</h1>
+  <p>Melde dich mit deinem ClickUp-Workspace an, um die Auswertung all deiner Boards zu sehen.</p>
   <a id="loginBtn" class="cta" href="#">Login mit ClickUp</a>
   <div id="loginMsg"></div>
-  <div class="hint">Es werden ausschließlich Daten deines eigenen Workspace angezeigt.</div>
+  <div class="hint2">Es werden ausschließlich Daten deines eigenen Workspace angezeigt.</div>
 </div>
 
 <div id="app" class="wrap" hidden>
   <header>
     <div><div class="brand">EMR Unternehmensberatung</div><h1 id="clientName">Dashboard</h1></div>
-    <button class="gear" id="gear" title="Einstellungen" aria-label="Einstellungen">&#9881;</button>
+    <button class="gear" id="gear" title="Einstellungen">&#9881;</button>
     <div class="panel" id="panel" hidden>
-      <h3>Verbunden als</h3>
-      <p class="who" id="who">—</p>
+      <h3>Verbunden als</h3><p class="who" id="who">—</p>
       <button class="row" id="refresh">↻&nbsp; Daten aktualisieren</button>
       <button class="row" id="signout">⤓&nbsp; Auf diesem Gerät abmelden</button>
       <div class="sep"></div>
       <button class="row danger" id="disconnect">⊘&nbsp; Verbindung trennen &amp; Datenfreigabe beenden</button>
-      <p class="note">Beim Trennen werden deine Zugangsdaten bei EMR gelöscht und es werden keine Daten mehr ausgewertet. Vollständig widerrufen kannst du zusätzlich in ClickUp unter Einstellungen → Apps.</p>
+      <p class="note">Beim Trennen werden deine Zugangsdaten bei EMR gelöscht. Vollständig widerrufen: ClickUp → Einstellungen → Apps.</p>
     </div>
   </header>
-  <div class="controls">
-    <div><label>Von</label><input type="date" id="von"></div>
-    <div><label>Bis</label><input type="date" id="bis"></div>
-    <div class="presets">
-      <button data-days="30">Letzte 30 T</button>
-      <button data-days="60">Letzte 60 T</button>
-      <button data-all="1">Gesamt</button>
-    </div>
-  </div>
-  <div class="range-note" id="rangeNote"></div>
-  <div class="kpis" id="kpis"></div>
-  <h2>Vertriebs-Funnel (Kohorte nach Anfragedatum)</h2>
-  <div class="funnel" id="funnel"></div>
-  <h2>Return on Ad Spend je Kanal</h2>
-  <div id="roasWrap"></div>
+  <div class="seg" id="seg"></div>
+  <div id="boardview"></div>
 </div>
 
 <script>
@@ -104,84 +79,63 @@ const CLIENT_ID="39O92I4WWUMJBCKO8BXDAKSXAAS15NP4";
 const AUTH_URL="https://app.clickup.com/api?client_id="+CLIENT_ID+"&redirect_uri="+encodeURIComponent(CALLBACK);
 const PAID={Facebook:"#1877f2",Google:"#34a853",Instagram:"#e1306c"};
 const eur=n=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0);
-const inR=(d,v,b)=>d&&d>=v&&d<=b;const days=(a,b)=>(new Date(b)-new Date(a))/86400000;
-const TODAY="2026-06-12";let DEALS=[],SPEND=[];
+const esc=s=>String(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function tok(){return localStorage.getItem('emr_kunde_token');}
+async function api(extra){const r=await fetch(API+"?token="+encodeURIComponent(tok())+(extra||""));if(r.status===401){localStorage.removeItem('emr_kunde_token');showLogin('Sitzung abgelaufen.');throw new Error('401');}return r.json();}
 
-function spendInRange(q,v,b){return SPEND.filter(s=>s.kanal===q&&s.date_start<=b&&s.date_stop>=v).reduce((a,s)=>a+(+s.spend),0);}
-function minAnfrage(){return DEALS.map(d=>d.anfrage_am).filter(Boolean).sort()[0]||'2026-04-01';}
+function showLogin(msg,ok){document.getElementById('app').hidden=true;document.getElementById('login').hidden=false;document.getElementById('loginMsg').innerHTML=msg?`<div class="${ok?'ok':'err'}">${msg}</div>`:'';}
 
-function render(){
-  const v=document.getElementById('von').value,b=document.getElementById('bis').value;
-  document.getElementById('rangeNote').textContent=`Zeitraum: ${v} bis ${b} · Kohorte = Deals mit Anfragedatum im Zeitraum`;
-  const cohort=DEALS.filter(d=>inR(d.anfrage_am,v,b));
-  const won=cohort.filter(d=>d.status==='gewonnen');
-  const wonRev=won.reduce((a,d)=>a+(+d.wert),0);
-  const pipe=cohort.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);
-  const decided=cohort.filter(d=>['gewonnen','verloren'].includes(d.status)).length;
-  const spendTotal=Object.keys(PAID).reduce((a,q)=>a+spendInRange(q,v,b),0);
-  const roas=spendTotal?wonRev/spendTotal:null;
-  const cyc=won.length?(won.reduce((a,d)=>a+days(d.anfrage_am,d.gewonnen_am),0)/won.length):null;
-  const winRate=decided?Math.round(won.length/decided*100):0;
-  document.getElementById('kpis').innerHTML=[
-    ['g',eur(wonRev),`Umsatz gewonnen (${won.length})`],['',eur(pipe),'Offene Pipeline'],['a',roas!=null?roas.toFixed(2)+'×':'–','ROAS gesamt'],
-    ['',eur(spendTotal),'Ad-Spend (Zeitraum)'],['',cyc!=null?cyc.toFixed(1)+' Tage':'–','Ø Sales-Cycle'],['',winRate+' %','Win-Rate (entschieden)']
-  ].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
-  const tot=cohort.length||1;
-  const f=[['Anfragen',cohort.length],['Qualifiziert',cohort.filter(d=>d.status!=='anfrage unqualifiziert').length],['Besichtigt',cohort.filter(d=>d.besichtigung_am).length],['Angebot',cohort.filter(d=>d.angebot_am).length],['Entschieden',decided],['Gewonnen',won.length]];
-  document.getElementById('funnel').innerHTML=f.map((r,i)=>`<div class="frow"><span>${r[0]}</span><div class="bar" style="width:${Math.max(2,r[1]/tot*100)}%;background:${i===5?'var(--green)':'var(--accent)'}"></div><span class="n">${r[1]}</span></div>`).join('');
-  const chans=[...new Set(cohort.map(d=>d.quelle))];
-  let rows=chans.map(q=>{const cd=cohort.filter(d=>d.quelle===q);const cw=cd.filter(d=>d.status==='gewonnen');const rev=cw.reduce((a,d)=>a+(+d.wert),0);const pl=cd.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);const sp=spendInRange(q,v,b);return {q,leads:cd.length,won:cw.length,rev,pl,sp,ro:sp?rev/sp:null};}).sort((a,b2)=>b2.sp-a.sp||b2.rev-a.rev);
-  const cls=r=>r.ro==null?'':(r.ro>=1.7?'good':r.ro>=1?'mid':'bad');
-  document.getElementById('roasWrap').innerHTML=rows.length?`<table><thead><tr><th>Kanal</th><th>Leads</th><th>Gew.</th><th>Umsatz</th><th>Pipeline</th><th>Ad-Spend</th><th>ROAS</th></tr></thead><tbody>`+
-    rows.map(r=>`<tr class="${r.sp?'':'muted'}"><td class="k"><span class="pill" style="background:${PAID[r.q]||'#adb5bd'}"></span>${r.q}</td><td>${r.leads}</td><td>${r.won}</td><td>${eur(r.rev)}</td><td>${eur(r.pl)}</td><td>${r.sp?eur(r.sp):'–'}</td><td class="roas ${cls(r)}">${r.ro!=null?r.ro.toFixed(2)+'×':'organisch'}</td></tr>`).join('')+`</tbody></table>`:'<p style="color:var(--mut)">Keine Deals im Zeitraum.</p>';
+let BOARDS=[];
+async function start(){
+  let d;try{d=await api("&boards=1");}catch(e){return;}
+  if(d.error){localStorage.removeItem('emr_kunde_token');return showLogin('Zugriff nicht möglich.');}
+  BOARDS=d.boards||[];
+  const order=['nk','bm','qc','re','td'];BOARDS.sort((a,b)=>order.indexOf(a.board_key)-order.indexOf(b.board_key));
+  document.getElementById('clientName').textContent=d.client||'Mein Dashboard';
+  document.getElementById('who').textContent=d.name||d.client||'—';
+  document.getElementById('login').hidden=true;document.getElementById('app').hidden=false;
+  document.getElementById('seg').innerHTML=BOARDS.map((b,i)=>`<button data-k="${b.board_key}" class="${i===0?'on':''}">${esc(b.board)}</button>`).join('');
+  const btns=[...document.querySelectorAll('#seg button')];
+  btns.forEach(btn=>btn.onclick=()=>{btns.forEach(b=>b.classList.remove('on'));btn.classList.add('on');boardView(BOARDS.find(x=>x.board_key===btn.dataset.k));});
+  boardView(BOARDS[0]);
 }
-function wireControls(){
-  document.querySelectorAll('.presets button').forEach(btn=>btn.onclick=()=>{
-    if(btn.dataset.all){document.getElementById('von').value=minAnfrage();}else{const d=new Date(TODAY);d.setDate(d.getDate()-parseInt(btn.dataset.days));document.getElementById('von').value=d.toISOString().slice(0,10);}
-    document.getElementById('bis').value=TODAY;render();
-  });
-  document.getElementById('von').onchange=render;document.getElementById('bis').onchange=render;
+async function boardView(b){
+  const bv=document.getElementById('boardview');
+  if(b.board_key==='nk'){bv.innerHTML='<p style="color:var(--mut)">lädt…</p>';const d=await api("");bv.innerHTML=renderRoas(d.deals||[],d.spend||[]);return;}
+  const kpis=[[`<span class="v a">${b.cycle_days} T</span>`,'Ø Durchlaufzeit (Zeit-in-Status)'],[`<span class="v">${b.throughput_30d}</span>`,'Durchsatz (30 T)'],[`<span class="v">${b.open_tasks}</span>`,'Offene Aufgaben'],[`<span class="v">${b.worked_hours} h</span>`,'Aufwand (getrackte Std.)']].map(k=>`<div class="kpi">${k[0]}<div class="l">${k[1]}</div></div>`).join('');
+  let body=`<div class="kpis">${kpis}</div><p style="font-size:13px;margin:10px 2px 0"><b>Ergebnis:</b> ${esc(b.outcome_text)}</p>`;
+  const stages=await api("&stages=1&board="+b.board_key);
+  const max=Math.max(...stages.map(s=>+s.avg_days),1),hot=Math.max(...stages.map(s=>+s.avg_days));
+  body+=`<h2>Zeit-in-Status je Phase · Engpass</h2><div class="stagebar">`+stages.map(s=>`<div class="srow"><span>${esc(s.stage)}</span><div class="bar ${(+s.avg_days===hot)?'hot':''}" style="width:${Math.max(3,s.avg_days/max*100)}%"></div><span class="d">${s.avg_days} T</span></div>`).join('')+`</div><p class="hint">Der längste Balken ist der Engpass: hier verliert der Prozess die meiste Zeit.</p>`;
+  bv.innerHTML=body;
 }
-
-function showLogin(msg,ok){
-  document.getElementById('app').hidden=true;document.getElementById('login').hidden=false;
-  document.getElementById('loginMsg').innerHTML=msg?`<div class="${ok?'ok':'err'}">${msg}</div>`:'';
+function renderRoas(DEALS,SPEND){
+  const won=DEALS.filter(d=>d.status==='gewonnen'),wonRev=won.reduce((a,d)=>a+(+d.wert),0);
+  const pipe=DEALS.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.status)).reduce((a,d)=>a+(+d.wert),0);
+  const decided=DEALS.filter(d=>['gewonnen','verloren'].includes(d.status)).length;
+  const sp=q=>SPEND.filter(s=>s.kanal===q).reduce((a,s)=>a+(+s.spend),0);
+  const spendTotal=Object.keys(PAID).reduce((a,q)=>a+sp(q),0),roas=spendTotal?wonRev/spendTotal:null;
+  const days=(a,b)=>(new Date(b)-new Date(a))/86400000,cyc=won.length?(won.reduce((a,d)=>a+days(d.anfrage_am,d.gewonnen_am),0)/won.length):null;
+  const kp=[['g',eur(wonRev),`Umsatz gewonnen (${won.length})`],['',eur(pipe),'Offene Pipeline'],['a',roas!=null?roas.toFixed(2)+'×':'–','ROAS gesamt'],['',cyc!=null?cyc.toFixed(1)+' T':'–','Ø Sales-Cycle']].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+  const f=[['Anfragen',DEALS.length],['Qualifiziert',DEALS.filter(d=>d.status!=='anfrage unqualifiziert').length],['Besichtigt',DEALS.filter(d=>d.besichtigung_am).length],['Angebot',DEALS.filter(d=>d.angebot_am).length],['Gewonnen',won.length]];
+  const tot=DEALS.length||1,funnel=f.map((r,i)=>`<div class="frow"><span>${r[0]}</span><div class="bar" style="width:${Math.max(3,r[1]/tot*100)}%;background:${i===4?'var(--green)':'var(--accent)'}"></div><span class="n">${r[1]}</span></div>`).join('');
+  const chans=[...new Set(DEALS.map(d=>d.quelle))],cls=r=>r==null?'':(r>=1.7?'good':r>=1?'mid':'bad');
+  const rows=chans.map(q=>{const cd=DEALS.filter(d=>d.quelle===q),cw=cd.filter(d=>d.status==='gewonnen'),rev=cw.reduce((a,d)=>a+(+d.wert),0),s=sp(q);return{q,leads:cd.length,won:cw.length,rev,s,ro:s?rev/s:null};}).sort((a,b)=>b.s-a.s||b.rev-a.rev);
+  const table=`<table><thead><tr><th>Kanal</th><th>Leads</th><th>Gew.</th><th>Umsatz</th><th>Ad-Spend</th><th>ROAS</th></tr></thead><tbody>`+rows.map(r=>`<tr class="${r.s?'':'muted'}"><td class="k"><span class="pill" style="background:${PAID[r.q]||'#adb5bd'}"></span>${esc(r.q)}</td><td>${r.leads}</td><td>${r.won}</td><td>${eur(r.rev)}</td><td>${r.s?eur(r.s):'–'}</td><td class="roas ${cls(r.ro)}">${r.ro!=null?r.ro.toFixed(2)+'×':'organisch'}</td></tr>`).join('')+`</tbody></table>`;
+  return `<div class="kpis">${kp}</div><h2>Vertriebs-Funnel</h2><div class="stagebar">${funnel}</div><h2>Return on Ad Spend je Kanal</h2>${table}`;
 }
-async function loadData(token){
-  try{
-    const r=await fetch(API+"?token="+encodeURIComponent(token));
-    if(r.status===401){localStorage.removeItem('emr_kunde_token');return showLogin('Sitzung abgelaufen – bitte erneut anmelden.');}
-    const d=await r.json();
-    if(d.error){localStorage.removeItem('emr_kunde_token');return showLogin('Zugriff nicht möglich.');}
-    DEALS=d.deals||[];SPEND=d.spend||[];
-    document.getElementById('clientName').textContent=d.name||'Mein Dashboard';
-    document.getElementById('who').textContent=d.name||'—';
-    document.getElementById('login').hidden=true;document.getElementById('app').hidden=false;
-    document.getElementById('von').value=minAnfrage();document.getElementById('bis').value=TODAY;
-    wireControls();render();
-  }catch(e){showLogin('Verbindungsfehler.');}
-}
-
 // settings
-function token(){return localStorage.getItem('emr_kunde_token');}
-document.getElementById('gear').onclick=(e)=>{e.stopPropagation();const p=document.getElementById('panel');p.hidden=!p.hidden;};
+document.getElementById('gear').onclick=e=>{e.stopPropagation();const p=document.getElementById('panel');p.hidden=!p.hidden;};
 document.addEventListener('click',e=>{const p=document.getElementById('panel');if(!p.hidden&&!p.contains(e.target)&&e.target.id!=='gear')p.hidden=true;});
-document.getElementById('refresh').onclick=()=>{document.getElementById('panel').hidden=true;if(token())loadData(token());};
+document.getElementById('refresh').onclick=()=>{document.getElementById('panel').hidden=true;start();};
 document.getElementById('signout').onclick=()=>{localStorage.removeItem('emr_kunde_token');location.reload();};
-document.getElementById('disconnect').onclick=async()=>{
-  if(!confirm('Verbindung trennen? Deine Zugangsdaten werden bei EMR gelöscht und es werden keine Daten mehr ausgewertet.'))return;
-  try{await fetch(API+"?disconnect=1&token="+encodeURIComponent(token()));}catch(_){}
-  localStorage.removeItem('emr_kunde_token');
-  showLogin('Verbindung getrennt. Es werden keine Daten mehr geteilt.',true);
-};
-
-(function init(){
+document.getElementById('disconnect').onclick=async()=>{if(!confirm('Verbindung trennen? Deine Zugangsdaten werden bei EMR gelöscht.'))return;try{await api("&disconnect=1");}catch(_){}localStorage.removeItem('emr_kunde_token');showLogin('Verbindung getrennt. Es werden keine Daten mehr geteilt.',true);};
+(function(){
   document.getElementById('loginBtn').href=AUTH_URL;
-  const h=new URLSearchParams(location.hash.slice(1));
-  if(h.get('t')){localStorage.setItem('emr_kunde_token',h.get('t'));history.replaceState(null,'',location.pathname);}
-  if(h.get('err')){showLogin(decodeURIComponent(h.get('err')));return;}
-  const tk=localStorage.getItem('emr_kunde_token');
-  if(tk)loadData(tk);else showLogin();
+  const hsh=new URLSearchParams(location.hash.slice(1));
+  if(hsh.get('t')){localStorage.setItem('emr_kunde_token',hsh.get('t'));history.replaceState(null,'',location.pathname);}
+  if(hsh.get('err')){showLogin(decodeURIComponent(hsh.get('err')));return;}
+  if(tok())start();else showLogin();
 })();
 </script>
 </body>
