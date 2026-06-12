@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EMR · Neukundengewinnung – ROAS Dashboard</title>
+<style>
+  :root{--ink:#0f1729;--mut:#5b6678;--line:#e6e9f0;--soft:#f6f8fc;--accent:#3b5bdb;--green:#2f9e44;--red:#e03131;--amber:#f08c00}
+  *{box-sizing:border-box}
+  body{margin:0;background:#eef1f6;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:980px;margin:24px auto;background:#fff;border-radius:16px;box-shadow:0 10px 40px rgba(15,23,41,.1);padding:26px 30px 34px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid var(--ink);padding-bottom:14px}
+  .brand{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:21px;margin:6px 0 0}
+  .tag{font-size:11px;color:var(--amber);border:1px solid #ffe3b3;background:#fff8ec;border-radius:999px;padding:3px 10px}
+  .controls{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;margin:18px 0 6px}
+  .controls label{font-size:11px;color:var(--mut);display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:.05em}
+  .controls input[type=date]{padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .presets{display:flex;gap:6px;margin-left:auto}
+  .presets button{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font-size:12px;cursor:pointer;color:var(--ink)}
+  .presets button:hover{background:#eef2fb;border-color:#c9d4ef}
+  .range-note{font-size:12px;color:var(--mut);margin:2px 0 16px}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .kpi{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+  .kpi .v{font-size:22px;font-weight:750;letter-spacing:-.02em}
+  .kpi .l{font-size:11.5px;color:var(--mut);margin-top:2px}
+  .kpi .v.g{color:var(--green)}.kpi .v.a{color:var(--accent)}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--mut);margin:24px 0 10px;font-weight:700}
+  .funnel{display:flex;flex-direction:column;gap:7px}
+  .frow{display:grid;grid-template-columns:150px 1fr 40px;align-items:center;gap:10px;font-size:13px}
+  .bar{height:22px;background:var(--accent);border-radius:5px;min-width:2px;transition:width .25s}
+  .frow .n{text-align:right;font-variant-numeric:tabular-nums;font-weight:650}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th,td{padding:9px 8px;text-align:right;border-bottom:1px solid var(--line)}
+  th:first-child,td:first-child{text-align:left}
+  th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);font-weight:700}
+  td.k{font-weight:650}
+  .pill{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+  .roas{font-weight:750}.good{color:var(--green)}.mid{color:var(--amber)}.bad{color:var(--red)}
+  .muted td{color:var(--mut)}
+  .empty{color:var(--mut);font-size:13px;padding:18px 0}
+  footer{margin-top:20px;border-top:1px solid var(--line);padding-top:10px;font-size:11px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div><div class="brand">EMR Unternehmensberatung</div><h1>Neukundengewinnung – ROAS Dashboard</h1></div>
+    <span class="tag">Demo · Beispieldaten</span>
+  </header>
+
+  <div class="controls">
+    <div><label>Von</label><input type="date" id="von" value="2026-04-01"></div>
+    <div><label>Bis</label><input type="date" id="bis" value="2026-06-12"></div>
+    <div class="presets">
+      <button data-days="30">Letzte 30 T</button>
+      <button data-days="60">Letzte 60 T</button>
+      <button data-all="1">Gesamt</button>
+    </div>
+  </div>
+  <div class="range-note" id="rangeNote"></div>
+
+  <div class="kpis" id="kpis"></div>
+
+  <h2>Vertriebs-Funnel (Kohorte nach Anfragedatum)</h2>
+  <div class="funnel" id="funnel"></div>
+
+  <h2>Return on Ad Spend je Kanal</h2>
+  <div id="roasWrap"></div>
+
+  <footer>
+    Architektur: ClickUp (Deals) + Werbekonto (Ad-Spend) → Analyse-DB → dieses Dashboard. Beispieldaten zur Veranschaulichung.
+    <span id="genline"></span>
+  </footer>
+</div>
+
+<script>
+const DEALS = [
+ {o:"Objekt 15",art:"Unterhaltsreinigung",q:"Facebook",w:3750,s:"gewonnen",anf:"2026-04-10",bes:"2026-04-20",ang:"2026-04-28",gew:"2026-05-15",ver:null},
+ {o:"Objekt 07",art:"Grundreinigung",q:"Google",w:3200,s:"gewonnen",anf:"2026-04-22",bes:"2026-05-02",ang:"2026-05-12",gew:"2026-05-26",ver:null},
+ {o:"Objekt 16",art:"Grundreinigung",q:"Instagram",w:2400,s:"verloren",anf:"2026-04-15",bes:"2026-04-25",ang:"2026-05-05",gew:null,ver:"2026-05-20"},
+ {o:"Objekt 08",art:"Sonderreinigung",q:"Facebook",w:1500,s:"verloren",anf:"2026-05-01",bes:"2026-05-10",ang:"2026-05-18",gew:null,ver:"2026-05-30"},
+ {o:"Objekt 14",art:"Sonderreinigung",q:"Google",w:2200,s:"angebotsabsprache",anf:"2026-05-05",bes:"2026-05-15",ang:"2026-05-25",gew:null,ver:null},
+ {o:"Objekt 06",art:"Unterhaltsreinigung",q:"Facebook",w:1400,s:"angebotsabsprache",anf:"2026-05-12",bes:"2026-05-22",ang:"2026-06-01",gew:null,ver:null},
+ {o:"Objekt 21",art:"Unterhaltsreinigung",q:"Instagram",w:980,s:"angebotserstellung",anf:"2026-05-15",bes:"2026-05-25",ang:"2026-06-05",gew:null,ver:null},
+ {o:"Objekt 13",art:"Grundreinigung",q:"Google",w:1750,s:"angebotserstellung",anf:"2026-05-18",bes:"2026-05-28",ang:"2026-06-08",gew:null,ver:null},
+ {o:"Objekt 05",art:"Sonderreinigung",q:"Facebook",w:1300,s:"angebotserstellung",anf:"2026-05-20",bes:"2026-05-30",ang:"2026-06-10",gew:null,ver:null},
+ {o:"Objekt 01S",art:"Sonderreinigung",q:"Instagram",w:1100,s:"besichtigung terminiert",anf:"2026-05-22",bes:"2026-06-02",ang:null,gew:null,ver:null},
+ {o:"Objekt 20",art:"Sonderreinigung",q:"GelbeSeiten",w:900,s:"besichtigung terminiert",anf:"2026-05-25",bes:"2026-06-05",ang:null,gew:null,ver:null},
+ {o:"Objekt 12",art:"Unterhaltsreinigung",q:"Empfehlung",w:2100,s:"besichtigung terminiert",anf:"2026-05-28",bes:"2026-06-08",ang:null,gew:null,ver:null},
+ {o:"Objekt 04",art:"Grundreinigung",q:"Google",w:1600,s:"besichtigung terminiert",anf:"2026-05-30",bes:"2026-06-10",ang:null,gew:null,ver:null},
+ {o:"Objekt 02F",art:"Unterhaltsreinigung",q:"Facebook",w:2600,s:"besichtigung terminieren",anf:"2026-05-29",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 19",art:"Grundreinigung",q:"GelbeSeiten",w:1200,s:"besichtigung terminieren",anf:"2026-06-01",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 11",art:"Sonderreinigung",q:"Facebook",w:800,s:"besichtigung terminieren",anf:"2026-06-03",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 03",art:"Unterhaltsreinigung",q:"Google",w:1500,s:"besichtigung terminieren",anf:"2026-06-05",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 17",art:"Sonderreinigung",q:"Instagram",w:1000,s:"anfrage eingegangen",anf:"2026-06-06",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 09",art:"Unterhaltsreinigung",q:"Empfehlung",w:1900,s:"anfrage eingegangen",anf:"2026-06-08",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 01G",art:"Grundreinigung",q:"Facebook",w:1400,s:"anfrage eingegangen",anf:"2026-06-10",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 18",art:"Unterhaltsreinigung",q:"Telefonische Akquise",w:0,s:"anfrage unqualifiziert",anf:"2026-05-10",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 10",art:"Grundreinigung",q:"Instagram",w:0,s:"anfrage unqualifiziert",anf:"2026-05-08",bes:null,ang:null,gew:null,ver:null},
+ {o:"Objekt 02",art:"Sonderreinigung",q:"GelbeSeiten",w:0,s:"anfrage unqualifiziert",anf:"2026-05-14",bes:null,ang:null,gew:null,ver:null}
+];
+// Meta-format ad spend (monthly rows)
+const SPEND = [
+ {q:"Facebook",start:"2026-04-01",stop:"2026-04-30",spend:700},
+ {q:"Facebook",start:"2026-05-01",stop:"2026-05-31",spend:1100},
+ {q:"Facebook",start:"2026-06-01",stop:"2026-06-12",spend:600},
+ {q:"Instagram",start:"2026-04-01",stop:"2026-04-30",spend:300},
+ {q:"Instagram",start:"2026-05-01",stop:"2026-05-31",spend:600},
+ {q:"Instagram",start:"2026-06-01",stop:"2026-06-12",spend:300},
+ {q:"Google",start:"2026-04-01",stop:"2026-04-30",spend:500},
+ {q:"Google",start:"2026-05-01",stop:"2026-05-31",spend:800},
+ {q:"Google",start:"2026-06-01",stop:"2026-06-12",spend:500}
+];
+const PAID = {Facebook:"#1877f2",Google:"#34a853",Instagram:"#e1306c"};
+const eur = n => new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n||0);
+const inR = (d,v,b) => d && d>=v && d<=b;
+const days = (a,b)=> (new Date(b)-new Date(a))/86400000;
+
+function spendInRange(q,v,b){return SPEND.filter(s=>s.q===q && s.start<=b && s.stop>=v).reduce((a,s)=>a+s.spend,0);}
+
+function render(){
+  const v=document.getElementById('von').value, b=document.getElementById('bis').value;
+  document.getElementById('rangeNote').textContent = `Zeitraum: ${v} bis ${b} · Kohorte = Deals mit Anfragedatum im Zeitraum`;
+  const cohort = DEALS.filter(d=>inR(d.anf,v,b));
+  const won = cohort.filter(d=>d.s==='gewonnen');
+  const wonRev = won.reduce((a,d)=>a+d.w,0);
+  const pipe = cohort.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.s)).reduce((a,d)=>a+d.w,0);
+  const decided = cohort.filter(d=>['gewonnen','verloren'].includes(d.s)).length;
+  const spendTotal = Object.keys(PAID).reduce((a,q)=>a+spendInRange(q,v,b),0);
+  const roas = spendTotal? wonRev/spendTotal : null;
+  const cyc = won.length? (won.reduce((a,d)=>a+days(d.anf,d.gew),0)/won.length) : null;
+  const winRate = decided? Math.round(won.length/decided*100):0;
+
+  document.getElementById('kpis').innerHTML = [
+    ['g',eur(wonRev),`Umsatz gewonnen (${won.length})`],
+    ['',eur(pipe),'Offene Pipeline'],
+    ['a',roas!=null?roas.toFixed(2)+'×':'–','ROAS gesamt'],
+    ['',eur(spendTotal),'Ad-Spend (Zeitraum)'],
+    ['',cyc!=null?cyc.toFixed(1)+' Tage':'–','Ø Sales-Cycle'],
+    ['',winRate+' %','Win-Rate (entschieden)']
+  ].map(k=>`<div class="kpi"><div class="v ${k[0]}">${k[1]}</div><div class="l">${k[2]}</div></div>`).join('');
+
+  // funnel cumulative on cohort
+  const tot=cohort.length||1;
+  const f=[['Anfragen',cohort.length],
+    ['Qualifiziert',cohort.filter(d=>d.s!=='anfrage unqualifiziert').length],
+    ['Besichtigt',cohort.filter(d=>d.bes).length],
+    ['Angebot',cohort.filter(d=>d.ang).length],
+    ['Entschieden',decided],
+    ['Gewonnen',won.length]];
+  document.getElementById('funnel').innerHTML = f.map((r,i)=>`<div class="frow"><span>${r[0]}</span><div class="bar" style="width:${Math.max(2,r[1]/tot*100)}%;background:${i===5?'var(--green)':'var(--accent)'}"></div><span class="n">${r[1]}</span></div>`).join('');
+
+  // channel table
+  const chans=[...new Set(cohort.map(d=>d.q))];
+  let rows = chans.map(q=>{
+    const cd=cohort.filter(d=>d.q===q);
+    const cw=cd.filter(d=>d.s==='gewonnen');
+    const rev=cw.reduce((a,d)=>a+d.w,0);
+    const pl=cd.filter(d=>!['gewonnen','verloren','anfrage unqualifiziert'].includes(d.s)).reduce((a,d)=>a+d.w,0);
+    const sp=spendInRange(q,v,b);
+    const ro=sp? rev/sp : null;
+    return {q,leads:cd.length,won:cw.length,rev,pl,sp,ro};
+  }).sort((a,b2)=>b2.sp-a.sp || b2.rev-a.rev);
+  if(!rows.length){document.getElementById('roasWrap').innerHTML='<div class="empty">Keine Deals im gewählten Zeitraum.</div>';return;}
+  const cls=r=> r.ro==null?'':(r.ro>=1.7?'good':r.ro>=1?'mid':'bad');
+  document.getElementById('roasWrap').innerHTML = `<table><thead><tr><th>Kanal</th><th>Leads</th><th>Gew.</th><th>Umsatz</th><th>Pipeline</th><th>Ad-Spend</th><th>ROAS</th></tr></thead><tbody>`+
+   rows.map(r=>`<tr class="${r.sp?'':'muted'}"><td class="k"><span class="pill" style="background:${PAID[r.q]||'#adb5bd'}"></span>${r.q}</td><td>${r.leads}</td><td>${r.won}</td><td>${eur(r.rev)}</td><td>${eur(r.pl)}</td><td>${r.sp?eur(r.sp):'–'}</td><td class="roas ${cls(r)}">${r.ro!=null?r.ro.toFixed(2)+'×':'organisch'}</td></tr>`).join('')+
+   `</tbody></table>`;
+}
+
+document.querySelectorAll('.presets button').forEach(btn=>btn.onclick=()=>{
+  const bis="2026-06-12";
+  if(btn.dataset.all){document.getElementById('von').value="2026-04-01";}
+  else{const d=new Date(bis);d.setDate(d.getDate()-parseInt(btn.dataset.days));document.getElementById('von').value=d.toISOString().slice(0,10);}
+  document.getElementById('bis').value=bis; render();
+});
+document.getElementById('von').onchange=render;
+document.getElementById('bis').onchange=render;
+document.getElementById('genline').textContent=' · Stand Jun 2026';
+render();
+</script>
+</body>
+</html>
